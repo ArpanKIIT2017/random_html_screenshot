@@ -1,5 +1,6 @@
 To run the project, it is assumed that node >= 10.5 already configured
-    $ mkdir imgs pages
+
+    $ mkdir pages imgs
     $ npm install
     $ node main.py <sample_size> <no_of_worker_threads>
 
