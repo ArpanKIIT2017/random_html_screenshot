@@ -3,27 +3,23 @@ const { exec } = require('child_process');
 const sampleSize = +process.argv[2];
 const workerProcess = +process.argv[3]
 
-const eachWorkerSampleSize = Math.floor((sampleSize / workerProcess));
-const firstWorkerSampleSize = Math.floor((sampleSize / workerProcess)) + (sampleSize % workerProcess);
+const rem = sampleSize % workerProcess;
+
+const distribution = new Array(workerProcess).fill((sampleSize - rem) / workerProcess);
+
+for (let i = 0; i < rem; i++) {
+    distribution[i % workerProcess] += 1;
+}
 
 console.log(`Sample Size = ${sampleSize}`);
 console.log(`No of worker processes = ${workerProcess}`);
-console.log(`No of samples processed by first worker = ${firstWorkerSampleSize}`);
-console.log(`No of samples processed by other workers = ${eachWorkerSampleSize}`);
+console.log(`Sample Distribution in Workers = ${distribution}`);
 
-let start = 1;
-
-while (start <= sampleSize) {
-    if (start == 1) {
-        exec(`node gen_dataset ${start} ${start+firstWorkerSampleSize-1}`);
-        
-        start = start + firstWorkerSampleSize;
-    } else {
-        exec(`node gen_dataset ${start} ${start+eachWorkerSampleSize-1}`);
-
-        start = start + eachWorkerSampleSize;
-    }
-    
+// exec(`node gen_dataset ${start} ${end}`);
+let offset = 1
+for (let i = 0; i < workerProcess; i++) {
+    exec(`node gen_dataset ${offset} ${distribution[i]+offset-1}`);
+    offset += distribution[i];
 }
 
 console.log("All workers ready! Waiting for workers to finish...");
