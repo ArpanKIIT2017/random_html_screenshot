@@ -6,22 +6,24 @@ const workerProcess = +process.argv[3]
 const eachWorkerSampleSize = Math.floor((sampleSize / workerProcess));
 const firstWorkerSampleSize = Math.floor((sampleSize / workerProcess)) + (sampleSize % workerProcess);
 
-console.log(sampleSize, workerProcess);
-console.log(firstWorkerSampleSize, eachWorkerSampleSize);
+console.log(`Sample Size = ${sampleSize}`);
+console.log(`No of worker processes = ${workerProcess}`);
+console.log(`No of samples processed by first worker = ${firstWorkerSampleSize}`);
+console.log(`No of samples processed by other workers = ${eachWorkerSampleSize}`);
 
 let start = 1;
 
 while (start <= sampleSize) {
     if (start == 1) {
-        console.log(`node gen_dataset ${start} ${start+firstWorkerSampleSize-1}`);
         exec(`node gen_dataset ${start} ${start+firstWorkerSampleSize-1}`);
         
         start = start + firstWorkerSampleSize;
     } else {
-        console.log(`node gen_dataset ${start} ${start+eachWorkerSampleSize-1}`);
         exec(`node gen_dataset ${start} ${start+eachWorkerSampleSize-1}`);
 
         start = start + eachWorkerSampleSize;
     }
     
 }
+
+console.log("All workers ready! Waiting for workers to finish...");

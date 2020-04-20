@@ -7,7 +7,6 @@ const randomHTML = require('./random_generator');
 
 const generate = async (lower, upper) => {
 
-  console.log(lower, upper);
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.setViewport({width: 1920, height: 1080});
